@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, Text, View, Switch, Platform } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import { useDispatch } from "react-redux";
+
 import HeaderButton from "../components/HeaderButton";
 import Colors from "../constants/Colors";
+import { setFilters } from "../store/actions/meals-actions";
 
 const FilterSwitch = props => {
   return (
@@ -26,18 +29,21 @@ const FiltersScreen = props => {
   const [isVegan, setIsVegan] = useState(false);
   const [isVegetarian, setIsVegetarian] = useState(false);
 
+  const dispatch = useDispatch();
+
   //useCallback is used here, so that it's only recreated if its dependencies changed
   //useCallback(fn, deps)
   const saveFilters = useCallback(() => {
     const appliedFilters = {
+      //the keys below MUST MATCH the logic in ../store/reducers/meals (whatever's inside "case SET_FILTERS:")
       glutenFree: isGlutenFree,
       lactoseFree: isLactoseFree,
       vegan: isVegan,
-      isVegetarian: isVegetarian
+      vegetarian: isVegetarian
     };
 
-    console.log(appliedFilters);
-  }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian]);
+    dispatch(setFilters(appliedFilters));
+  }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian, dispatch]);
 
   //this "setParams" is here to pass data into "getParam" below (in this file)
   //you can name the "save" key (below) whatever you want to name it
